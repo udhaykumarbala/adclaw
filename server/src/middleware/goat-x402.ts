@@ -1,123 +1,126 @@
 import { Request, Response, NextFunction } from 'express';
-import crypto from 'crypto';
 
 const API_URL = process.env.GOATX402_API_URL || 'https://api.x402.goat.network';
 const API_KEY = process.env.GOATX402_API_KEY || '';
 const API_SECRET = process.env.GOATX402_API_SECRET || '';
-const MERCHANT_ID = process.env.GOATX402_MERCHANT_ID || '';
+const MERCHANT_ID = process.env.GOATX402_MERCHANT_ID || 'adclaw';
+
+const CHAIN_ID = parseInt(process.env.GOAT_CHAIN_ID || '48816');
+const USDC_CONTRACT = process.env.GOAT_USDC_ADDRESS || '0x29d1ee93e9ecf6e50f309f498e40a6b42d352fa1';
 
 interface PricingRule {
   price: string;
-  token: string;
+  amountWei: string;
   description: string;
 }
 
-function signRequest(method: string, reqPath: string, body: string, timestamp: string): string {
-  const message = `${method}\n${reqPath}\n${body}\n${timestamp}`;
-  return crypto.createHmac('sha256', API_SECRET).update(message).digest('hex');
-}
+// Lazy-load ESM SDK
+let sdkClient: any = null;
+let sdkLoaded = false;
 
-async function fetchWithTimeout(url: string, opts: RequestInit, timeoutMs = 10000): Promise<globalThis.Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+async function getClient(): Promise<any> {
+  if (sdkLoaded) return sdkClient;
+  sdkLoaded = true;
+
+  if (!API_KEY || !API_SECRET) {
+    console.log('x402: No API credentials — demo/fallback mode');
+    return null;
+  }
+
   try {
-    return await fetch(url, { ...opts, signal: controller.signal });
-  } finally {
-    clearTimeout(timer);
+    // Use Function to prevent TypeScript from transforming dynamic import to require
+    const dynamicImport = new Function('specifier', 'return import(specifier)');
+    const { GoatX402Client } = await dynamicImport('goatx402-sdk-server');
+    sdkClient = new GoatX402Client({
+      baseUrl: API_URL,
+      apiKey: API_KEY,
+      apiSecret: API_SECRET,
+    });
+    console.log('x402: SDK client initialized');
+    return sdkClient;
+  } catch (e: any) {
+    console.error('x402: SDK init failed:', e.message);
+    return null;
   }
 }
 
-async function createOrder(amount: string, token: string, description: string): Promise<any> {
-  const timestamp = Math.floor(Date.now() / 1000).toString();
-  const reqPath = '/api/v1/orders';
-  const body = JSON.stringify({
-    merchantId: MERCHANT_ID,
-    amount,
-    token,
-    chain: 'goat-testnet3',
-    description,
-  });
-
-  const signature = signRequest('POST', reqPath, body, timestamp);
-
-  const res = await fetchWithTimeout(`${API_URL}${reqPath}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': API_KEY,
-      'X-Timestamp': timestamp,
-      'X-Sign': signature,
-    },
-    body,
-  });
-
-  return res.json();
-}
-
-async function checkOrderStatus(orderId: string): Promise<any> {
-  const timestamp = Math.floor(Date.now() / 1000).toString();
-  const reqPath = `/api/v1/orders/${orderId}`;
-  const signature = signRequest('GET', reqPath, '', timestamp);
-
-  const res = await fetchWithTimeout(`${API_URL}${reqPath}`, {
-    headers: {
-      'X-API-Key': API_KEY,
-      'X-Timestamp': timestamp,
-      'X-Sign': signature,
-    },
-  });
-
-  return res.json();
-}
-
+// USDC has 6 decimals
+// Gate ALL methods on these base routes (both GET and POST)
 const PRICING: Record<string, PricingRule> = {
-  'POST /api/campaign': { price: '0.10', token: 'USDC', description: 'Campaign strategy' },
-  'POST /api/landing':  { price: '0.30', token: 'USDC', description: 'Landing page generation' },
-  'POST /api/event':    { price: '0.20', token: 'USDC', description: 'Event page generation' },
-  'GET /api/report':    { price: '0.05', token: 'USDC', description: 'Analytics report' },
+  '/api/campaign': { price: '0.10', amountWei: '100000', description: 'Campaign strategy' },
+  '/api/landing':  { price: '0.30', amountWei: '300000', description: 'Landing page generation' },
+  '/api/event':    { price: '0.20', amountWei: '200000', description: 'Event page generation' },
+  '/api/report':   { price: '0.05', amountWei: '50000',  description: 'Analytics report' },
 };
 
 export function x402PaymentGate(pricing: Record<string, PricingRule> = PRICING) {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const routeKey = `${req.method} ${req.baseUrl}`;
-    const rule = pricing[routeKey];
+    const rule = pricing[req.baseUrl];
 
     if (!rule) return next();
 
+    // Check for existing paid order
     const orderId = req.headers['x-order-id'] as string;
-
     if (orderId) {
-      try {
-        const status = await checkOrderStatus(orderId);
-        if (status.status === 'settled' || status.status === 'completed') {
-          return next();
+      const client = await getClient();
+      if (client) {
+        try {
+          const status = await client.getOrderStatus(orderId);
+          if (status.status === 'PAYMENT_CONFIRMED' || status.status === 'INVOICED') {
+            return next();
+          }
+        } catch (_e) {
+          // Fall through
         }
-      } catch (_e) {
-        // Fall through to payment required
       }
     }
 
-    try {
-      const order = await createOrder(rule.price, rule.token, rule.description);
+    // Try creating a real order via SDK
+    const client = await getClient();
+    if (client) {
+      try {
+        const order = await client.createOrder({
+          dappOrderId: `adclaw_${Date.now()}`,
+          chainId: CHAIN_ID,
+          tokenSymbol: 'USDC',
+          tokenContract: USDC_CONTRACT,
+          fromAddress: (req.headers['x-payer-address'] as string) || '0x0000000000000000000000000000000000000000',
+          amountWei: rule.amountWei,
+        });
 
-      return res.status(402).json({
-        error: 'Payment Required',
-        x402: true,
-        order: {
-          id: order.orderId || order.id,
-          amount: rule.price,
-          token: rule.token,
-          chain: 'goat-testnet3',
-          chainId: 48816,
-          description: rule.description,
-          paymentAddress: order.paymentAddress,
-          expiresAt: order.expiresAt,
-        },
-        instructions: 'Send payment to the specified address, then retry with X-Order-Id header.',
-      });
-    } catch (e) {
-      console.error('x402 API error, allowing through:', e);
-      return next();
+        return res.status(402).json({
+          error: 'Payment Required',
+          x402: true,
+          order,
+          pricing: {
+            amount: rule.price,
+            token: 'USDC',
+            chain: 'goat-testnet3',
+            chainId: CHAIN_ID,
+            description: rule.description,
+          },
+          instructions: 'Pay the order, then retry with X-Order-Id header.',
+        });
+      } catch (e: any) {
+        console.error('x402: Order creation failed:', e.message || e);
+      }
     }
+
+    // Fallback: return static 402 with pricing info
+    return res.status(402).json({
+      error: 'Payment Required',
+      x402: true,
+      order: {
+        amount: rule.price,
+        amountWei: rule.amountWei,
+        token: 'USDC',
+        tokenContract: USDC_CONTRACT,
+        chain: 'goat-testnet3',
+        chainId: CHAIN_ID,
+        description: rule.description,
+        merchantId: MERCHANT_ID,
+      },
+      instructions: 'Send USDC to the merchant, then retry with X-Order-Id header.',
+    });
   };
 }

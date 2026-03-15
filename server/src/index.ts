@@ -9,6 +9,7 @@ import { eventRouter } from './routes/event';
 import { reportRouter } from './routes/report';
 import { trackRouter } from './routes/track';
 import { x402PaymentGate } from './middleware/goat-x402';
+import { x402WebhookRouter } from './routes/x402-webhook';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3402');
@@ -49,6 +50,7 @@ app.use('/api/landing', conditionalPayment, landingRouter);
 app.use('/api/event', conditionalPayment, eventRouter);
 app.use('/api/report', conditionalPayment, reportRouter);
 app.use('/api/track', trackRouter);
+app.use('/api/x402/webhook', x402WebhookRouter);  // x402 payment confirmations
 
 // Health check
 app.get('/health', (_req, res) => {
