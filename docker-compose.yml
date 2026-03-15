@@ -1,0 +1,87 @@
+services:
+  # === OpenClaw AI Agent ===
+  openclaw-gateway:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: adclaw-agent
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:18789:18789"
+    volumes:
+      - ./openclaw/config:/home/node/.openclaw
+      - ./openclaw/workspace:/home/node/.openclaw/workspace
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - ADCLAW_SERVER_URL=http://adclaw-server:3402
+      - ADCLAW_PUBLIC_URL=${ADCLAW_PUBLIC_URL}
+      - INTERNAL_SECRET=${INTERNAL_SECRET}
+    env_file:
+      - .env
+    networks:
+      - adclaw-net
+    depends_on:
+      adclaw-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:18789/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # === OpenClaw CLI (for onboarding & management) ===
+  openclaw-cli:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: adclaw-cli
+    network_mode: "service:openclaw-gateway"
+    volumes:
+      - ./openclaw/config:/home/node/.openclaw
+      - ./openclaw/workspace:/home/node/.openclaw/workspace
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+    env_file:
+      - .env
+    profiles:
+      - cli
+
+  # === AdClaw Express Server ===
+  adclaw-server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: adclaw-server
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3402:3402"
+    volumes:
+      - ./server/public:/app/public
+      - ./server/data:/app/data
+    environment:
+      - PORT=3402
+      - GOAT_PRIVATE_KEY=${GOAT_PRIVATE_KEY}
+      - GOAT_RPC_URL=${GOAT_RPC_URL}
+      - GOAT_CHAIN_ID=${GOAT_CHAIN_ID}
+      - GOATX402_API_URL=${GOATX402_API_URL}
+      - GOATX402_API_KEY=${GOATX402_API_KEY}
+      - GOATX402_API_SECRET=${GOATX402_API_SECRET}
+      - GOATX402_MERCHANT_ID=${GOATX402_MERCHANT_ID}
+      - ERC8004_IDENTITY_REGISTRY=${ERC8004_IDENTITY_REGISTRY}
+      - ERC8004_REPUTATION_REGISTRY=${ERC8004_REPUTATION_REGISTRY}
+      - GA4_MEASUREMENT_ID=${GA4_MEASUREMENT_ID:-}
+      - GA4_API_SECRET=${GA4_API_SECRET:-}
+      - ADCLAW_PUBLIC_URL=${ADCLAW_PUBLIC_URL}
+      - INTERNAL_SECRET=${INTERNAL_SECRET}
+    env_file:
+      - .env
+    networks:
+      - adclaw-net
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3402/health"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
+networks:
+  adclaw-net:
+    driver: bridge

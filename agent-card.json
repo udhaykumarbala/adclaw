@@ -1,0 +1,41 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "AdClaw — Autonomous Marketing Agency",
+  "description": "24/7 AI agent that plans campaigns, generates landing pages, creates event pages, writes ad copy, tracks analytics, and optimizes performance. Pay-per-use via x402 on GOAT.",
+  "image": "ipfs://QmAdClawLogoHash",
+  "x402Support": true,
+  "active": true,
+  "services": [
+    {
+      "name": "campaign-plan",
+      "endpoint": "/api/campaign",
+      "version": "1.0",
+      "skills": ["marketing", "strategy", "analytics"],
+      "domains": ["digital-marketing", "advertising"]
+    },
+    {
+      "name": "landing-page",
+      "endpoint": "/api/landing",
+      "version": "1.0",
+      "skills": ["web-design", "html", "conversion-optimization"]
+    },
+    {
+      "name": "event-page",
+      "endpoint": "/api/event",
+      "version": "1.0",
+      "skills": ["event-marketing", "web-design"]
+    },
+    {
+      "name": "analytics-report",
+      "endpoint": "/api/report",
+      "version": "1.0",
+      "skills": ["analytics", "reporting", "optimization"]
+    }
+  ],
+  "registrations": [
+    {
+      "agentRegistry": "eip155:48816:0x556089008Fc0a60cD09390Eca93477ca254A5522",
+      "agentId": "256"
+    }
+  ]
+}

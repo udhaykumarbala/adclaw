@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chennai Coffee Co. — Grand Opening</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            coffee: { 50: '#fdf8f0', 100: '#f5e6d0', 200: '#e8c89c', 400: '#c4883d', 600: '#92610f', 800: '#5a3d0a', 900: '#3d2906' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-coffee-50 text-gray-900 font-sans">
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-coffee-900 via-coffee-800 to-coffee-600"></div>
+    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 25% 25%, white 1px, transparent 1px); background-size: 40px 40px;"></div>
+    <div class="relative max-w-5xl mx-auto px-6 py-24 md:py-32 text-center text-white">
+      <div class="inline-block px-4 py-1 bg-white/10 backdrop-blur rounded-full text-sm font-medium mb-6 border border-white/20">
+        Grand Opening — March 22, 2026
+      </div>
+      <h1 class="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
+        Chennai Coffee Co.
+      </h1>
+      <p class="mt-6 text-xl md:text-2xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+        Artisan brews, single-origin beans, handcrafted in the heart of Chennai.
+      </p>
+      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+        <button data-track="cta_click" data-value="hero_reserve" class="bg-white text-coffee-800 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-coffee-100 transition shadow-lg shadow-black/20">
+          Reserve Your Spot
+        </button>
+        <button data-track="cta_click" data-value="hero_menu" class="border-2 border-white/30 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white/10 transition">
+          View Menu
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <section class="bg-white border-y border-coffee-100">
+    <div class="max-w-5xl mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div>
+        <div class="text-3xl font-bold text-coffee-600">12+</div>
+        <div class="text-sm text-gray-500 mt-1">Single Origins</div>
+      </div>
+      <div>
+        <div class="text-3xl font-bold text-coffee-600">5</div>
+        <div class="text-sm text-gray-500 mt-1">Brewing Methods</div>
+      </div>
+      <div>
+        <div class="text-3xl font-bold text-coffee-600">100%</div>
+        <div class="text-sm text-gray-500 mt-1">Ethically Sourced</div>
+      </div>
+      <div>
+        <div class="text-3xl font-bold text-coffee-600">Free</div>
+        <div class="text-sm text-gray-500 mt-1">Opening Day Coffee</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="max-w-5xl mx-auto px-6 py-20">
+    <h2 class="text-3xl md:text-4xl font-bold text-center">Why Chennai Coffee Co.?</h2>
+    <p class="text-center text-gray-500 mt-3 max-w-xl mx-auto">More than a coffee shop — it's a community hub for coffee lovers, creators, and foodies.</p>
+
+    <div class="mt-14 grid md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-2xl p-8 shadow-sm border border-coffee-100 hover:shadow-md transition">
+        <div class="w-12 h-12 bg-coffee-100 rounded-xl flex items-center justify-center text-2xl">&#9749;</div>
+        <h3 class="mt-5 text-xl font-semibold">Single Origin Beans</h3>
+        <p class="mt-3 text-gray-600 leading-relaxed">Direct from farms in Coorg, Chikmagalur, and Nilgiris. Every cup tells a story.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-8 shadow-sm border border-coffee-100 hover:shadow-md transition">
+        <div class="w-12 h-12 bg-coffee-100 rounded-xl flex items-center justify-center text-2xl">&#127860;</div>
+        <h3 class="mt-5 text-xl font-semibold">Expert Baristas</h3>
+        <p class="mt-3 text-gray-600 leading-relaxed">Trained in pour-over, espresso, cold brew, and South Indian filter techniques.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-8 shadow-sm border border-coffee-100 hover:shadow-md transition">
+        <div class="w-12 h-12 bg-coffee-100 rounded-xl flex items-center justify-center text-2xl">&#128187;</div>
+        <h3 class="mt-5 text-xl font-semibold">Work-Friendly Space</h3>
+        <p class="mt-3 text-gray-600 leading-relaxed">Fast WiFi, power outlets, quiet corners. Your new favorite remote office.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIAL -->
+  <section class="bg-coffee-900 text-white">
+    <div class="max-w-3xl mx-auto px-6 py-20 text-center">
+      <div class="text-5xl mb-6">&#10077;</div>
+      <blockquote class="text-2xl md:text-3xl font-light leading-relaxed italic">
+        The best filter coffee I've had outside my grandmother's kitchen. And the pour-over is world-class.
+      </blockquote>
+      <div class="mt-8 text-white/60">— Food blogger, preview tasting</div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="max-w-5xl mx-auto px-6 py-20 text-center">
+    <h2 class="text-3xl md:text-4xl font-bold">Opening Day: Free Coffee for the First 100 Visitors</h2>
+    <p class="mt-4 text-xl text-gray-500">March 22, 2026 — 7:00 AM onwards</p>
+    <p class="mt-2 text-gray-400">123 Coffee Lane, Nungambakkam, Chennai 600034</p>
+    <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+      <button data-track="cta_click" data-value="bottom_reserve" class="bg-coffee-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-coffee-800 transition shadow-lg">
+        Reserve Your Free Coffee
+      </button>
+      <a href="https://maps.google.com/?q=Nungambakkam+Chennai" target="_blank" data-track="cta_click" data-value="directions" class="border-2 border-coffee-200 text-coffee-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-coffee-50 transition inline-flex items-center justify-center">
+        Get Directions
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-coffee-100 py-8">
+    <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+      <div>Chennai Coffee Co. &copy; 2026 — Built by AdClaw AI Agent</div>
+      <div class="flex gap-6">
+        <span>Instagram</span>
+        <span>WhatsApp</span>
+        <span>Google Maps</span>
+      </div>
+    </div>
+  </footer>
+
+<script src="/tracker.js" data-campaign="1270cfb1-61c1-4de3-b772-74c31ec582df" data-page="chennai-coffee"></script>
+</body>
+</html>
