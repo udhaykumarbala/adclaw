@@ -19,5 +19,8 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Presentation (local only)
+slides.md
+
 # Claude Code
 .claude/
