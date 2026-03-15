@@ -15,27 +15,31 @@ GOAT Track | OpenClaw Hack 2026 | Solo Build
 
 ## Slide 2: The Problem
 
-Every small business needs marketing.
+Every business needs marketing. Nobody has the time.
 
 - Agencies cost $2,000–$20,000/month
 - Freelancers take days to deliver
-- DIY tools still need a human at the wheel
-- No one works at 3 AM
+- Search Console has errors nobody fixes
+- Google Ads bleeds money unoptimized
+- Analytics dashboards nobody checks
+- SEO issues pile up silently
+- **No one works at 3 AM**
 
 ---
 
 ## Slide 3: The Solution
 
-AdClaw is an **AI agent** that IS the agency.
+AdClaw is a **24/7 AI agent** that IS the agency.
 
-Describe your business → Pay 0.10 USDC → Get:
-- Complete campaign strategy
-- Live landing page (real URL)
-- Event page with RSVP
-- Ad copy for Google + Meta
-- Real-time analytics
+It connects to your **Search Console, Analytics, and Ads** — then:
+- Finds & fixes SEO issues automatically
+- Creates and optimizes Google + Meta ad campaigns
+- Monitors ROAS, CPA, CTR around the clock
+- Pauses underperforming ads, scales winners
+- Builds landing pages & event pages on demand
+- Reports to you on Telegram — you sleep, it works
 
-All in under 30 seconds.
+Describe your business → Pay 0.10 USDC → Done.
 
 ---
 
@@ -142,10 +146,10 @@ User Prompt → x402 Payment (USDC) → AI Generation → Deployed Assets
 > "Hi, I'm Udhay. I built AdClaw — an AI agent that works harder than any marketing intern, never takes a coffee break, and actually *gets paid* in crypto. Let's just say it has a better work ethic than my last agency."
 
 ## Slide 2
-> "Small businesses have two options: spend thousands on an agency, or spend hours figuring out Meta Ads Manager — which, let's be honest, is designed to confuse you into spending more. What if your marketing team was an AI that never sleeps, never bills hourly, and never asks for a standing desk?"
+> "Right now, your Search Console has crawl errors you haven't checked in weeks. Your Google Ads are burning money on keywords that don't convert. Your analytics dashboard? Last opened... never. Small businesses can't afford a marketing team, and founders can't afford the time. So the SEO rots, the ads bleed, and the analytics just... sit there. What if an agent handled all of that at 3 AM while you sleep?"
 
 ## Slide 3
-> "AdClaw doesn't just *plan* campaigns — it *builds* them. Landing pages, event pages, ad copy — all deployed at live URLs. It's like hiring a full marketing team, except this one accepts USDC and doesn't need a Slack channel."
+> "AdClaw connects to your Search Console, your Analytics, your Ads accounts — and just... runs them. It finds the broken links, fixes the meta tags, creates the campaigns, pauses the losers, scales the winners. Landing pages, event pages, ad copy — all deployed at live URLs. It's like hiring a full marketing team, except this one accepts USDC, works at 3 AM, and doesn't need a Slack channel."
 
 ## Slide 4
 > "Let me show you the magic. I type a description, I pay 30 cents in USDC on GOAT Testnet, and... boom — a full campaign with a live landing page. No templates. No drag-and-drop. Just AI and vibes. Actually, AI and *on-chain receipts* — much better than vibes."
