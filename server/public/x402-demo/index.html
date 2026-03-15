@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdClaw — x402 Live Payment Demo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1117; --surface: #1a1d27; --surface2: #111320; --border: #2d3148;
+      --text: #e4e6f0; --muted: #8b8fa7; --dim: #5a5e78;
+      --accent: #6c5ce7; --green: #00b894; --red: #e74c3c; --amber: #f39c12;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+    .container { max-width: 820px; margin: 0 auto; padding: 24px 16px 80px; }
+    h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .badge-live { background: rgba(0,184,148,.15); color: var(--green); }
+    .badge-ai { background: rgba(108,92,231,.15); color: var(--accent); margin-left: 6px; }
+
+    .step { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+    .step.active { border-color: var(--accent); }
+    .step.done { border-color: var(--green); }
+    .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+    .step.active .step-num { background: var(--accent); }
+    .step.done .step-num { background: var(--green); }
+    .step-title { font-weight: 600; font-size: 16px; }
+    .step-desc { color: var(--muted); font-size: 13px; }
+
+    .code { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; line-height: 1.6; max-height: 400px; overflow-y: auto; }
+    .code .key { color: #a78bfa; }
+    .code .str { color: #34d399; }
+    .code .num { color: #fbbf24; }
+    .code .label { color: var(--muted); }
+
+    textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 15px; padding: 14px; resize: vertical; min-height: 80px; outline: none; transition: border-color .2s; }
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: var(--dim); }
+    .input-hint { font-size: 12px; color: var(--dim); margin-top: 6px; }
+    .examples { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .example-chip { padding: 6px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; font-size: 12px; color: var(--muted); cursor: pointer; transition: all .2s; }
+    .example-chip:hover { border-color: var(--accent); color: var(--text); }
+
+    .btn { padding: 12px 28px; border-radius: 8px; border: none; font-weight: 600; font-size: 15px; cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: #5a4bd1; transform: translateY(-1px); }
+    .btn-primary:disabled { background: var(--border); color: var(--dim); cursor: not-allowed; transform: none; }
+    .btn-green { background: var(--green); color: white; }
+    .btn-green:hover { background: #00a884; }
+
+    .services { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0; }
+    @media (max-width: 600px) { .services { grid-template-columns: 1fr 1fr; } }
+    .svc { padding: 12px 8px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: all .2s; text-align: center; }
+    .svc:hover { border-color: var(--accent); }
+    .svc.selected { border-color: var(--accent); background: rgba(108,92,231,.1); }
+    .svc-name { font-weight: 600; font-size: 13px; }
+    .svc-price { color: var(--green); font-weight: 700; font-size: 18px; margin-top: 4px; }
+
+    .tx-result { background: rgba(0,184,148,.08); border: 1px solid rgba(0,184,148,.3); border-radius: 8px; padding: 16px; }
+    .tx-hash { font-family: monospace; font-size: 11px; word-break: break-all; color: var(--green); }
+    .tx-link { color: var(--accent); text-decoration: none; font-size: 13px; }
+    .tx-link:hover { text-decoration: underline; }
+
+    .balances { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .bal-card { background: var(--surface2); border-radius: 8px; padding: 12px; text-align: center; }
+    .bal-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    .bal-value { font-size: 24px; font-weight: 700; margin-top: 4px; }
+    .bal-addr { font-family: monospace; font-size: 10px; color: var(--dim); margin-top: 4px; }
+
+    .spinner { width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; color: var(--muted); }
+
+    .result-card { background: rgba(108,92,231,.06); border: 1px solid rgba(108,92,231,.25); border-radius: 12px; padding: 20px; }
+    .result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+    .result-header h3 { font-size: 18px; font-weight: 700; }
+    .plan-section { margin-bottom: 16px; }
+    .plan-section h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px; }
+    .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media (max-width: 600px) { .plan-grid { grid-template-columns: 1fr; } }
+    .plan-item { background: var(--surface2); border-radius: 6px; padding: 10px; font-size: 13px; }
+    .plan-item strong { color: var(--green); }
+    .plan-tag { display: inline-block; background: rgba(108,92,231,.15); color: var(--accent); padding: 2px 8px; border-radius: 4px; font-size: 11px; margin: 2px; }
+    .ad-card { background: var(--surface2); border-radius: 8px; padding: 12px; margin-bottom: 8px; border-left: 3px solid var(--accent); }
+    .ad-card .platform { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .ad-card .headline { font-weight: 600; font-size: 14px; }
+    .ad-card .desc { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+    .hidden { display: none !important; }
+    .arrow { text-align: center; color: var(--dim); font-size: 20px; margin: -4px 0; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>x402 Live Payment Demo <span class="badge badge-live">GOAT Testnet3</span><span class="badge badge-ai">AI-Powered</span></h1>
+  <p class="subtitle">Describe your business, pay with USDC, get a real AI-generated campaign plan</p>
+
+  <!-- STEP 1: Describe + Pick service -->
+  <div class="step active" id="step1">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">Describe your campaign</div>
+        <div class="step-desc">Tell AdClaw what you want to market</div>
+      </div>
+    </div>
+    <textarea id="description" placeholder="e.g., Launch campaign for my yoga studio in Bangalore, ₹30k budget, targeting working professionals aged 25-40"></textarea>
+    <div class="examples">
+      <div class="example-chip" data-text="Grand opening for a premium coffee shop in Chennai, ₹50k budget, targeting 18-35 foodies and remote workers">Coffee Shop</div>
+      <div class="example-chip" data-text="Online course launch for AI/ML fundamentals, $2000 budget, targeting tech professionals and CS students globally">Online Course</div>
+      <div class="example-chip" data-text="Yoga studio membership drive in Bangalore, ₹30k budget, targeting health-conscious working professionals 25-40">Yoga Studio</div>
+      <div class="example-chip" data-text="SaaS product launch for a project management tool, $5000 budget, targeting startup founders and team leads">SaaS Launch</div>
+    </div>
+    <div class="input-hint">Click an example or write your own. The more detail, the better the plan.</div>
+
+    <div style="margin-top: 20px;">
+      <div class="step-desc" style="margin-bottom: 8px; font-weight: 600; color: var(--text);">Select service tier:</div>
+      <div class="services" id="services">
+        <div class="svc selected" data-service="campaign-plan" data-price="0.10">
+          <div class="svc-name">Campaign Plan</div>
+          <div class="svc-price">0.10</div>
+        </div>
+        <div class="svc" data-service="landing-page" data-price="0.30">
+          <div class="svc-name">+ Landing Page</div>
+          <div class="svc-price">0.30</div>
+        </div>
+        <div class="svc" data-service="event-page" data-price="0.20">
+          <div class="svc-name">+ Event Page</div>
+          <div class="svc-price">0.20</div>
+        </div>
+        <div class="svc" data-service="analytics-report" data-price="0.05">
+          <div class="svc-name">Report Only</div>
+          <div class="svc-price">0.05</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btnRequest">Request Service</button>
+  </div>
+
+  <!-- STEP 2: 402 -->
+  <div class="arrow hidden" id="arrow1">&darr;</div>
+  <div class="step hidden" id="step2">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">HTTP 402 — Payment Required</div>
+        <div class="step-desc">AdClaw requires USDC payment on GOAT Testnet3 before generating</div>
+      </div>
+    </div>
+    <div class="code" id="response402"></div>
+  </div>
+
+  <!-- STEP 3: Pay -->
+  <div class="arrow hidden" id="arrow2">&darr;</div>
+  <div class="step hidden" id="step3">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">Pay with USDC on GOAT Network</div>
+        <div class="step-desc">Real on-chain USDC transfer on Bitcoin L2</div>
+      </div>
+    </div>
+    <div class="balances" id="balancesBefore"></div>
+    <button class="btn btn-primary" id="btnPay">Pay <span id="payAmount">0.10</span> USDC</button>
+    <div class="loading-row hidden" id="paying"><div class="spinner"></div><span>Sending USDC on-chain... (~3 seconds)</span></div>
+  </div>
+
+  <!-- STEP 4: TX Confirmed -->
+  <div class="arrow hidden" id="arrow3">&darr;</div>
+  <div class="step hidden" id="step4">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title">Payment Confirmed on GOAT Testnet3</div>
+        <div class="step-desc">USDC transferred — now generating your campaign plan</div>
+      </div>
+    </div>
+    <div class="tx-result" id="txResult"></div>
+    <div class="balances" id="balancesAfter"></div>
+    <div class="loading-row" id="generating"><div class="spinner"></div><span>AI generating your campaign plan...</span></div>
+  </div>
+
+  <!-- STEP 5: AI Result -->
+  <div class="arrow hidden" id="arrow4">&darr;</div>
+  <div class="step hidden" id="step5">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div>
+        <div class="step-title">Campaign Plan Delivered</div>
+        <div class="step-desc">AI-generated specifically for your business</div>
+      </div>
+    </div>
+    <div class="result-card" id="resultCard"></div>
+    <div style="margin-top:16px;display:flex;gap:8px;">
+      <button class="btn btn-green" id="btnReset">New Campaign</button>
+      <button class="btn btn-primary" id="btnShowRaw" style="background:var(--surface);border:1px solid var(--border);">View Raw JSON</button>
+    </div>
+    <div class="code hidden" id="rawJson" style="margin-top:12px;"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var API = window.location.origin;
+  var selectedService = 'campaign-plan';
+  var selectedPrice = '0.10';
+  var lastTxHash = '';
+  var lastPlan = null;
+
+  // Example chips
+  document.querySelector('.examples').addEventListener('click', function(e) {
+    var chip = e.target.closest('.example-chip');
+    if (chip) document.getElementById('description').value = chip.dataset.text;
+  });
+
+  // Service selection
+  document.getElementById('services').addEventListener('click', function(e) {
+    var svc = e.target.closest('.svc');
+    if (!svc) return;
+    document.querySelectorAll('.svc').forEach(function(s) { s.classList.remove('selected'); });
+    svc.classList.add('selected');
+    selectedService = svc.dataset.service;
+    selectedPrice = svc.dataset.price;
+    document.getElementById('payAmount').textContent = selectedPrice;
+  });
+
+  // Step 1: Request
+  document.getElementById('btnRequest').addEventListener('click', function() {
+    var desc = document.getElementById('description').value.trim();
+    if (!desc) { document.getElementById('description').focus(); return; }
+
+    var btn = this;
+    btn.disabled = true;
+
+    var endpoint = { 'campaign-plan':'/api/campaign', 'landing-page':'/api/landing', 'event-page':'/api/event', 'analytics-report':'/api/report/demo' }[selectedService];
+
+    fetch(API + endpoint).then(function(r) { return r.json(); }).then(function(data) {
+      document.getElementById('response402').innerHTML = formatJSON(data);
+      show('arrow1'); show('step2');
+      done('step1'); activate('step2');
+
+      return fetch(API + '/api/x402/demo/status').then(function(r) { return r.json(); });
+    }).then(function(status) {
+      if (status.configured) {
+        document.getElementById('balancesBefore').innerHTML = balanceCards(status.payer, status.merchant, 'Current Balances');
+      }
+      show('arrow2'); show('step3');
+      done('step2'); activate('step3');
+    }).catch(function(err) {
+      btn.disabled = false;
+      alert('Error: ' + err.message);
+    });
+  });
+
+  // Step 3: Pay
+  document.getElementById('btnPay').addEventListener('click', function() {
+    this.disabled = true;
+    show('paying');
+
+    fetch(API + '/api/x402/demo/pay', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ service: selectedService })
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      hide('paying');
+      if (!data.success) { document.getElementById('btnPay').disabled = false; alert(data.error); return; }
+
+      lastTxHash = data.payment.txHash;
+      var p = data.payment;
+      document.getElementById('txResult').innerHTML =
+        '<div style="margin-bottom:8px"><strong style="color:var(--green)">Transaction Confirmed</strong></div>' +
+        '<div class="tx-hash">' + p.txHash + '</div>' +
+        '<div style="margin-top:8px"><a href="' + p.explorer + '" target="_blank" class="tx-link">View on GOAT Explorer &nearr;</a></div>' +
+        '<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;color:var(--muted)">' +
+        '<div>Amount: <strong style="color:var(--green)">' + p.amount + '</strong></div>' +
+        '<div>Block: <strong style="color:var(--text)">#' + p.block + '</strong></div></div>';
+
+      document.getElementById('balancesAfter').innerHTML = balanceCards(data.balances.payer, data.balances.merchant, 'After Payment');
+
+      show('arrow3'); show('step4');
+      done('step3'); activate('step4');
+
+      // Now call AI generation
+      var desc = document.getElementById('description').value.trim();
+      fetch(API + '/api/x402/demo/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: desc, txHash: lastTxHash, service: selectedService })
+      }).then(function(r) { return r.json(); }).then(function(genData) {
+        hide('generating');
+        lastPlan = genData.plan;
+
+        document.getElementById('resultCard').innerHTML = renderPlan(genData.plan, genData.ai);
+        document.getElementById('rawJson').innerHTML = formatJSON(genData.plan);
+
+        show('arrow4'); show('step5');
+        done('step4'); activate('step5'); done('step5');
+      }).catch(function(err) {
+        hide('generating');
+        document.getElementById('resultCard').innerHTML = '<div style="color:var(--red)">Generation failed: ' + err.message + '</div>';
+        show('arrow4'); show('step5');
+      });
+    }).catch(function(err) {
+      hide('paying');
+      document.getElementById('btnPay').disabled = false;
+      alert(err.message);
+    });
+  });
+
+  // Show raw JSON toggle
+  document.getElementById('btnShowRaw').addEventListener('click', function() {
+    var el = document.getElementById('rawJson');
+    el.classList.toggle('hidden');
+    this.textContent = el.classList.contains('hidden') ? 'View Raw JSON' : 'Hide JSON';
+  });
+
+  // Reset
+  document.getElementById('btnReset').addEventListener('click', function() {
+    ['step2','step3','step4','step5','arrow1','arrow2','arrow3','arrow4','paying','generating','rawJson'].forEach(hide);
+    document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active','done'); });
+    activate('step1');
+    document.getElementById('btnRequest').disabled = false;
+    document.getElementById('btnPay').disabled = false;
+    document.getElementById('description').value = '';
+  });
+
+  function show(id) { document.getElementById(id).classList.remove('hidden'); }
+  function hide(id) { document.getElementById(id).classList.add('hidden'); }
+  function activate(id) { document.getElementById(id).classList.add('active'); }
+  function done(id) { var el = document.getElementById(id); el.classList.remove('active'); el.classList.add('done'); }
+
+  function formatJSON(obj) {
+    return JSON.stringify(obj, null, 2)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"([^"]+)":/g, '<span class="key">"$1"</span>:')
+      .replace(/: "(.*?)"/g, ': <span class="str">"$1"</span>')
+      .replace(/: (\d+\.?\d*)/g, ': <span class="num">$1</span>')
+      .replace(/: (true|false|null)/g, ': <span class="num">$1</span>');
+  }
+
+  function balanceCards(payer, merchant, label) {
+    return '<div style="font-size:11px;color:var(--dim);grid-column:1/-1;text-transform:uppercase;letter-spacing:1px">' + label + '</div>' +
+      '<div class="bal-card"><div class="bal-label">Client</div><div class="bal-value" style="color:var(--amber)">' + payer.usdc + ' <span style="font-size:14px">USDC</span></div><div class="bal-addr">' + payer.address.slice(0,6) + '...' + payer.address.slice(-4) + '</div></div>' +
+      '<div class="bal-card"><div class="bal-label">AdClaw</div><div class="bal-value" style="color:var(--green)">' + merchant.usdc + ' <span style="font-size:14px">USDC</span></div><div class="bal-addr">' + merchant.address.slice(0,6) + '...' + merchant.address.slice(-4) + '</div></div>';
+  }
+
+  function renderPlan(plan, isAi) {
+    if (plan.raw) {
+      return '<div style="white-space:pre-wrap;font-size:14px;line-height:1.7">' + escapeHtml(plan.raw) + '</div>';
+    }
+
+    var h = '<div class="result-header"><h3>' + escapeHtml(plan.campaignName || 'Campaign Plan') + '</h3>';
+    h += isAi ? '<span class="badge badge-ai">AI Generated</span>' : '<span class="badge" style="background:rgba(243,156,18,.15);color:var(--amber)">Template</span>';
+    h += '</div>';
+
+    if (plan.objective) h += '<div class="plan-section"><h4>Objective</h4><div style="font-size:14px">' + escapeHtml(plan.objective) + '</div></div>';
+
+    if (plan.targetAudience) {
+      var ta = plan.targetAudience;
+      h += '<div class="plan-section"><h4>Target Audience</h4><div class="plan-grid">';
+      if (ta.demographics) h += '<div class="plan-item"><strong>Demographics:</strong> ' + escapeHtml(ta.demographics) + '</div>';
+      if (ta.location) h += '<div class="plan-item"><strong>Location:</strong> ' + escapeHtml(ta.location) + '</div>';
+      h += '</div>';
+      if (ta.interests && ta.interests.length) {
+        h += '<div style="margin-top:8px">';
+        ta.interests.forEach(function(i) { h += '<span class="plan-tag">' + escapeHtml(i) + '</span>'; });
+        h += '</div>';
+      }
+      h += '</div>';
+    }
+
+    if (plan.budget) {
+      h += '<div class="plan-section"><h4>Budget Allocation</h4><div class="plan-grid">';
+      var alloc = plan.budget.allocation || {};
+      Object.keys(alloc).forEach(function(k) {
+        h += '<div class="plan-item"><strong>' + escapeHtml(k.replace(/_/g,' ')) + ':</strong> ' + escapeHtml(String(alloc[k])) + '</div>';
+      });
+      if (plan.budget.total) h += '<div class="plan-item"><strong>Total:</strong> ' + escapeHtml(plan.budget.total + (plan.budget.currency ? ' ' + plan.budget.currency : '')) + '</div>';
+      h += '</div></div>';
+    }
+
+    if (plan.kpis) {
+      h += '<div class="plan-section"><h4>KPIs</h4><div class="plan-grid">';
+      Object.keys(plan.kpis).forEach(function(k) {
+        h += '<div class="plan-item"><strong>' + escapeHtml(k.replace(/_/g,' ')) + ':</strong> ' + escapeHtml(String(plan.kpis[k])) + '</div>';
+      });
+      h += '</div></div>';
+    }
+
+    if (plan.adCopy) {
+      h += '<div class="plan-section"><h4>Ad Copy</h4>';
+      if (plan.adCopy.google) plan.adCopy.google.forEach(function(a) {
+        h += '<div class="ad-card"><div class="platform">Google Search</div><div class="headline">' + escapeHtml(a.headline) + '</div><div class="desc">' + escapeHtml(a.description) + '</div></div>';
+      });
+      if (plan.adCopy.meta) plan.adCopy.meta.forEach(function(a) {
+        h += '<div class="ad-card" style="border-left-color:var(--green)"><div class="platform" style="color:var(--green)">Meta / Instagram</div><div class="headline">' + escapeHtml(a.headline || a.primary_text) + '</div>';
+        if (a.primary_text && a.headline) h += '<div class="desc">' + escapeHtml(a.primary_text) + '</div>';
+        if (a.cta) h += '<div style="margin-top:6px"><span class="plan-tag">' + escapeHtml(a.cta) + '</span></div>';
+        h += '</div>';
+      });
+      h += '</div>';
+    }
+
+    if (plan.landingPageConcept) {
+      var lp = plan.landingPageConcept;
+      h += '<div class="plan-section"><h4>Landing Page Concept</h4>';
+      h += '<div class="ad-card" style="border-left-color:var(--amber)">';
+      if (lp.headline) h += '<div class="headline">' + escapeHtml(lp.headline) + '</div>';
+      if (lp.subheadline) h += '<div class="desc">' + escapeHtml(lp.subheadline) + '</div>';
+      if (lp.sections) {
+        h += '<div style="margin-top:8px">';
+        lp.sections.forEach(function(s) { h += '<span class="plan-tag">' + escapeHtml(s) + '</span>'; });
+        h += '</div>';
+      }
+      if (lp.cta_text) h += '<div style="margin-top:8px"><strong>CTA:</strong> ' + escapeHtml(lp.cta_text) + '</div>';
+      h += '</div></div>';
+    }
+
+    if (plan.recommendations && plan.recommendations.length) {
+      h += '<div class="plan-section"><h4>Recommendations</h4>';
+      plan.recommendations.forEach(function(r) {
+        h += '<div style="padding:6px 0;font-size:13px;color:var(--muted)">&bull; ' + escapeHtml(r) + '</div>';
+      });
+      h += '</div>';
+    }
+
+    if (plan.timeline) h += '<div class="plan-section"><h4>Timeline</h4><div style="font-size:14px">' + escapeHtml(plan.timeline) + '</div></div>';
+
+    return h;
+  }
+
+  function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+})();
+</script>
+</body>
+</html>

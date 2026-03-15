@@ -10,6 +10,7 @@ import { reportRouter } from './routes/report';
 import { trackRouter } from './routes/track';
 import { x402PaymentGate } from './middleware/goat-x402';
 import { x402WebhookRouter } from './routes/x402-webhook';
+import { x402DemoRouter } from './routes/x402-demo';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3402');
@@ -33,6 +34,7 @@ app.use(internalBypass);
 app.use('/sites', express.static(path.join(process.cwd(), 'public', 'sites'), { maxAge: '1h' }));
 app.use('/events', express.static(path.join(process.cwd(), 'public', 'events'), { maxAge: '1h' }));
 app.use('/dashboard', express.static(path.join(process.cwd(), 'public', 'dashboard')));
+app.use('/x402-demo', express.static(path.join(process.cwd(), 'public', 'x402-demo')));
 app.use('/tracker.js', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'tracker.js'));
 });
@@ -50,7 +52,8 @@ app.use('/api/landing', conditionalPayment, landingRouter);
 app.use('/api/event', conditionalPayment, eventRouter);
 app.use('/api/report', conditionalPayment, reportRouter);
 app.use('/api/track', trackRouter);
-app.use('/api/x402/webhook', x402WebhookRouter);  // x402 payment confirmations
+app.use('/api/x402/webhook', x402WebhookRouter);
+app.use('/api/x402/demo', x402DemoRouter);
 
 // Health check
 app.get('/health', (_req, res) => {

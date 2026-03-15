@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "gateway": {
+    "port": 18789,
+    "auth": {
+      "mode": "token"
+    },
+    "httpApi": {
+      "enabled": true
+    }
+  },
+  "models": {
+    "default": "anthropic/claude-sonnet-4-20250514",
+    "thinking": "anthropic/claude-sonnet-4-20250514"
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "open"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "workspace": "~/.openclaw/workspace"
+    }
+  },
+  "cron": {
+    "enabled": true
+  },
+  "hooks": {
+    "enabled": true
+  },
+  "skills": {
+    "load": {
+      "watch": true
+    }
+  }
+}

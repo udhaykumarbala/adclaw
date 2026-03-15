@@ -72,6 +72,11 @@ services:
       - GA4_API_SECRET=${GA4_API_SECRET:-}
       - ADCLAW_PUBLIC_URL=${ADCLAW_PUBLIC_URL}
       - INTERNAL_SECRET=${INTERNAL_SECRET}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - X402_DEMO_PAYER_PK=${X402_DEMO_PAYER_PK:-}
+      # Optional: route AI generation through OpenClaw gateway
+      - OPENCLAW_API_URL=http://openclaw-gateway:18789
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:-}
     env_file:
       - .env
     networks:
