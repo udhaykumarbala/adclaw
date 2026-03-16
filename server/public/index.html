@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#06070b">
+  <meta name="description" content="AdClaw — Autonomous AI Marketing Agent on GOAT Network. Pay with USDC, get AI-generated campaigns. On-chain identity, 24/7 operation.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F985;</text></svg>">
+  <title>AdClaw — Autonomous AI Marketing Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            void:    { 950: '#06070b', 900: '#0a0c14', 800: '#0f1117', 700: '#151825' },
+            surface: { 900: '#121520', 800: '#1a1d2b', 700: '#222639', 600: '#2d3148' },
+            accent:  { DEFAULT: '#6c5ce7', light: '#a29bfe', dim: '#4a3fb5' },
+            cyber:   { DEFAULT: '#00cec9', light: '#55efc4', dim: '#0a8f8c' },
+            neon:    { pink: '#fd79a8', coral: '#ff6b6b', gold: '#fdcb6e', sky: '#74b9ff' },
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'],
+            mono: ['SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* ===========================
+       ADCLAW LANDING — VISUAL SYSTEM
+       Design: Cyberpunk + Vercel minimal
+       Theme: Ultra-dark, neon accents, alive
+       =========================== */
+
+    /* ---------- BASE ---------- */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      /* Core palette */
+      --bg-root:      #06070b;
+      --bg-deep:      #0a0c14;
+      --bg-surface:   #0f1117;
+      --bg-elevated:  #151825;
+      --border:       rgba(108, 92, 231, 0.12);
+      --border-hover: rgba(108, 92, 231, 0.3);
+
+      /* Text */
+      --text-primary:  #e8eaf6;
+      --text-secondary:#8b8fa7;
+      --text-dim:      #4a4e68;
+
+      /* Accent */
+      --accent:       #6c5ce7;
+      --accent-light: #a29bfe;
+      --cyber:        #00cec9;
+      --cyber-light:  #55efc4;
+      --neon-pink:    #fd79a8;
+      --neon-gold:    #fdcb6e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-root);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ---------- DOT GRID PATTERN (full page) ---------- */
+    .dot-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image: radial-gradient(circle, rgba(108,92,231,0.08) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    /* ---------- AURORA / GRADIENT MESH ---------- */
+    .aurora {
+      position: fixed;
+      top: -40%;
+      left: -20%;
+      width: 140%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 40%, rgba(108,92,231,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 20%, rgba(0,206,201,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 60% at 50% 80%, rgba(253,121,168,0.06) 0%, transparent 50%);
+      animation: aurora-drift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes aurora-drift {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(-30px, 20px) scale(1.05); }
+      100% { transform: translate(20px, -15px) scale(0.97); }
+    }
+
+    /* ---------- HERO ORB — Animated gradient sphere ---------- */
+    .hero-orb {
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      background: conic-gradient(from 0deg, #6c5ce7, #00cec9, #fd79a8, #a29bfe, #6c5ce7);
+      animation: orb-spin 12s linear infinite, orb-breathe 6s ease-in-out infinite;
+    }
+
+    @keyframes orb-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orb-breathe {
+      0%, 100% { opacity: 0.4; filter: blur(80px); }
+      50%      { opacity: 0.6; filter: blur(60px); }
+    }
+
+    /* Inner sharp ring inside the orb */
+    .hero-orb-ring {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 1px solid rgba(108,92,231,0.3);
+      animation: ring-pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes ring-pulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50%      { transform: scale(1.3); opacity: 0.1; }
+    }
+
+    /* ---------- FLOATING PARTICLES (CSS only) ---------- */
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0;
+      animation: particle-float linear infinite;
+    }
+
+    @keyframes particle-float {
+      0%   { opacity: 0; transform: translateY(0) translateX(0); }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.6; }
+      100% { opacity: 0; transform: translateY(-120px) translateX(30px); }
+    }
+
+    /* ---------- GLASSMORPHISM CARD ---------- */
+    .glass-card {
+      background: rgba(15, 17, 23, 0.6);
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      border: 1px solid rgba(108, 92, 231, 0.1);
+      border-radius: 16px;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(108, 92, 231, 0.25);
+      background: rgba(15, 17, 23, 0.75);
+      box-shadow:
+        0 0 0 1px rgba(108, 92, 231, 0.15),
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 60px rgba(108, 92, 231, 0.06);
+      transform: translateY(-2px);
+    }
+
+    /* ---------- ANIMATED GRADIENT BORDER ---------- */
+    .gradient-border {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      padding: 1px;
+      background: conic-gradient(from var(--border-angle, 0deg), #6c5ce7, #00cec9, #fd79a8, #6c5ce7);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: border-rotate 4s linear infinite;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .gradient-border:hover::before {
+      opacity: 1;
+    }
+
+    @property --border-angle {
+      syntax: '<angle>';
+      inherits: false;
+      initial-value: 0deg;
+    }
+
+    @keyframes border-rotate {
+      to { --border-angle: 360deg; }
+    }
+
+    /* ---------- GLOW BUTTON ---------- */
+    .btn-glow {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 32px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: #fff;
+      background: linear-gradient(135deg, #6c5ce7, #4a3fb5);
+      border: 1px solid rgba(162, 155, 254, 0.3);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .btn-glow::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6c5ce7, #00cec9, #fd79a8, #6c5ce7);
+      z-index: -1;
+      opacity: 0;
+      filter: blur(12px);
+      transition: opacity 0.4s ease;
+    }
+
+    .btn-glow:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 20px rgba(108, 92, 231, 0.4),
+        0 0 60px rgba(108, 92, 231, 0.15);
+      border-color: rgba(162, 155, 254, 0.5);
+    }
+
+    .btn-glow:hover::before {
+      opacity: 0.6;
+    }
+
+    .btn-glow:active {
+      transform: translateY(0);
+      box-shadow: 0 0 10px rgba(108, 92, 231, 0.3);
+    }
+
+    /* Secondary ghost button */
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 32px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: var(--text-primary);
+      background: transparent;
+      border: 1px solid rgba(108, 92, 231, 0.25);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(108, 92, 231, 0.08);
+      border-color: rgba(108, 92, 231, 0.45);
+      box-shadow: 0 0 20px rgba(108, 92, 231, 0.08);
+    }
+
+    /* ---------- TEXT GRADIENT ---------- */
+    .text-gradient {
+      background: linear-gradient(135deg, #a29bfe, #6c5ce7, #00cec9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .text-gradient-warm {
+      background: linear-gradient(135deg, #fdcb6e, #fd79a8, #6c5ce7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ---------- PERSPECTIVE GRID (hero floor) ---------- */
+    .perspective-grid {
+      position: absolute;
+      bottom: -5%;
+      left: 50%;
+      transform: translateX(-50%) perspective(600px) rotateX(55deg);
+      width: 160%;
+      height: 400px;
+      background-image:
+        linear-gradient(rgba(108, 92, 231, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108, 92, 231, 0.1) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.4;
+      mask-image: linear-gradient(to top, rgba(0,0,0,0.6), transparent 80%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.6), transparent 80%);
+      animation: grid-scroll 8s linear infinite;
+    }
+
+    @keyframes grid-scroll {
+      to { background-position: 0 60px; }
+    }
+
+    /* ---------- STATUS INDICATOR (pulsing dot) ---------- */
+    .pulse-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyber);
+      box-shadow: 0 0 8px var(--cyber);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 4px var(--cyber); opacity: 1; }
+      50%      { box-shadow: 0 0 16px var(--cyber), 0 0 32px rgba(0,206,201,0.3); opacity: 0.7; }
+    }
+
+    /* ---------- SCANLINE (subtle) ---------- */
+    .scanline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.015) 2px,
+        rgba(0, 0, 0, 0.015) 4px
+      );
+    }
+
+    /* ---------- SCROLL REVEAL ---------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ---------- ANIMATED COUNTER ---------- */
+    .counter {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---------- GLITCH TEXT (hover only) ---------- */
+    .glitch-hover:hover {
+      animation: glitch-text 0.3s ease forwards;
+    }
+
+    @keyframes glitch-text {
+      0%   { text-shadow: 2px 0 #fd79a8, -2px 0 #00cec9; }
+      25%  { text-shadow: -2px 0 #fd79a8, 2px 0 #00cec9; }
+      50%  { text-shadow: 1px 0 #fd79a8, -1px 0 #00cec9; }
+      100% { text-shadow: none; }
+    }
+
+    /* ---------- TERMINAL / CODE BLOCK ---------- */
+    .terminal {
+      background: rgba(10, 12, 20, 0.8);
+      border: 1px solid rgba(108, 92, 231, 0.15);
+      border-radius: 12px;
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 16px;
+      background: rgba(21, 24, 37, 0.8);
+      border-bottom: 1px solid rgba(108, 92, 231, 0.1);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* ---------- FEATURE ICON GLOW ---------- */
+    .icon-glow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(108, 92, 231, 0.1);
+      border: 1px solid rgba(108, 92, 231, 0.15);
+      color: var(--accent-light);
+      transition: all 0.3s ease;
+    }
+
+    .glass-card:hover .icon-glow {
+      background: rgba(108, 92, 231, 0.18);
+      box-shadow: 0 0 20px rgba(108, 92, 231, 0.15);
+    }
+
+    /* ---------- HORIZONTAL SCROLLING TICKER ---------- */
+    .ticker {
+      display: flex;
+      animation: ticker-scroll 30s linear infinite;
+    }
+
+    @keyframes ticker-scroll {
+      to { transform: translateX(-50%); }
+    }
+
+    /* ---------- TYPING CURSOR ---------- */
+    .cursor-blink::after {
+      content: '|';
+      color: var(--cyber);
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+
+    /* ---------- SCROLLBAR ---------- */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(108,92,231,0.2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(108,92,231,0.35); }
+
+    /* ---------- CUSTOM SELECTION ---------- */
+    ::selection {
+      background: rgba(108, 92, 231, 0.3);
+      color: #fff;
+    }
+
+    /* ---------- SMOOTH SECTION DIVIDER ---------- */
+    .section-fade {
+      background: linear-gradient(to bottom,
+        var(--bg-root) 0%,
+        rgba(108, 92, 231, 0.03) 50%,
+        var(--bg-root) 100%
+      );
+    }
+
+    /* ---------- ANIMATED UNDERLINE (links) ---------- */
+    .link-underline {
+      position: relative;
+      text-decoration: none;
+    }
+
+    .link-underline::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), var(--cyber));
+      transition: width 0.3s ease;
+    }
+
+    .link-underline:hover::after {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body class="font-sans">
+  <!-- Background layers -->
+  <div class="dot-grid"></div>
+  <div class="aurora"></div>
+  <div class="scanline"></div>
+
+  <!-- ==================== NAV ==================== -->
+  <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="nav">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-18">
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-2 relative z-10 group">
+          <span class="text-xl font-bold tracking-tight">
+            Ad<span class="text-gradient">Claw</span>
+          </span>
+          <span class="pulse-dot ml-1"></span>
+        </a>
+
+        <!-- Nav links (desktop) -->
+        <div class="hidden md:flex items-center gap-8 text-sm text-[#8b8fa7]">
+          <a href="#features" class="link-underline hover:text-white transition-colors">Features</a>
+          <a href="#how-it-works" class="link-underline hover:text-white transition-colors">How It Works</a>
+          <a href="#pricing" class="link-underline hover:text-white transition-colors">Pricing</a>
+          <a href="#identity" class="link-underline hover:text-white transition-colors">On-Chain</a>
+        </div>
+
+        <!-- CTA -->
+        <div class="flex items-center gap-3">
+          <a href="/dashboard" class="hidden sm:inline-flex text-sm text-[#8b8fa7] hover:text-white transition-colors link-underline">Dashboard</a>
+          <button class="btn-glow !py-2.5 !px-5 !text-sm" onclick="window.open('https://t.me/AdClawBot','_blank')">
+            Launch Agent
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== HERO ==================== -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-32">
+    <!-- Perspective grid floor -->
+    <div class="perspective-grid"></div>
+
+    <!-- Animated orb -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div class="hero-orb"></div>
+    </div>
+
+    <!-- Orb rings -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div class="hero-orb-ring"></div>
+    </div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div class="hero-orb-ring" style="width:320px;height:320px;animation-delay:-2s;border-color:rgba(0,206,201,0.15)"></div>
+    </div>
+
+    <!-- Floating particles -->
+    <div class="particle" style="left:15%;top:60%;animation-duration:7s;animation-delay:0s;background:#6c5ce7"></div>
+    <div class="particle" style="left:25%;top:70%;animation-duration:9s;animation-delay:1s;background:#00cec9"></div>
+    <div class="particle" style="left:70%;top:55%;animation-duration:8s;animation-delay:0.5s;background:#fd79a8"></div>
+    <div class="particle" style="left:80%;top:65%;animation-duration:6s;animation-delay:2s;background:#a29bfe"></div>
+    <div class="particle" style="left:40%;top:75%;animation-duration:10s;animation-delay:3s;background:#00cec9"></div>
+    <div class="particle" style="left:55%;top:50%;animation-duration:7.5s;animation-delay:1.5s;background:#6c5ce7"></div>
+    <div class="particle" style="left:90%;top:45%;animation-duration:8.5s;animation-delay:4s;background:#fdcb6e"></div>
+    <div class="particle" style="left:10%;top:40%;animation-duration:6.5s;animation-delay:2.5s;background:#fd79a8"></div>
+
+    <!-- Hero content -->
+    <div class="relative z-10 max-w-4xl mx-auto px-5 sm:px-8 text-center">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] text-xs sm:text-sm text-[#8b8fa7] mb-8 reveal">
+        <span class="pulse-dot" style="width:6px;height:6px"></span>
+        <span>Live on GOAT Network</span>
+        <span class="text-[#4a4e68]">&middot;</span>
+        <span class="text-gradient font-medium">Bitcoin L2</span>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] reveal">
+        Your Autonomous<br>
+        <span class="text-gradient">AI Marketing Agent</span>
+      </h1>
+
+      <!-- Sub-headline -->
+      <p class="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl text-[#8b8fa7] max-w-2xl mx-auto leading-relaxed reveal">
+        Deploy AI-generated ad campaigns that run 24/7. Pay with USDC.
+        On-chain identity. Zero human babysitting.
+      </p>
+
+      <!-- CTA pair -->
+      <div class="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-4 justify-center reveal">
+        <button class="btn-glow text-base !px-8 !py-4" onclick="window.open('https://t.me/AdClawBot','_blank')">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+          Start on Telegram
+        </button>
+        <a href="/dashboard" class="btn-ghost text-base !px-8 !py-4">
+          View Live Dashboard
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+
+      <!-- Social proof ticker -->
+      <div class="mt-16 flex items-center justify-center gap-6 text-xs sm:text-sm text-[#4a4e68] reveal">
+        <span class="flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-[#00cec9]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          ERC-8004 Verified
+        </span>
+        <span class="flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-[#00cec9]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          x402 Payments
+        </span>
+        <span class="flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-[#00cec9]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          USDC on GOAT
+        </span>
+      </div>
+    </div>
+
+    <!-- Bottom fade -->
+    <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#06070b] to-transparent pointer-events-none"></div>
+  </section>
+
+  <!-- ==================== STATS BAR ==================== -->
+  <section class="relative z-10 border-y border-white/[0.04]" style="background: rgba(10,12,20,0.6); backdrop-filter: blur(12px);">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+        <div class="text-center reveal">
+          <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient counter" data-target="24">24/7</div>
+          <div class="text-xs sm:text-sm text-[#4a4e68] mt-1.5 uppercase tracking-wider font-medium">Always Running</div>
+        </div>
+        <div class="text-center reveal reveal-delay-1">
+          <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient counter">&lt;30s</div>
+          <div class="text-xs sm:text-sm text-[#4a4e68] mt-1.5 uppercase tracking-wider font-medium">Campaign Deploy</div>
+        </div>
+        <div class="text-center reveal reveal-delay-2">
+          <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient counter">$0.01</div>
+          <div class="text-xs sm:text-sm text-[#4a4e68] mt-1.5 uppercase tracking-wider font-medium">Per API Call</div>
+        </div>
+        <div class="text-center reveal reveal-delay-3">
+          <div class="text-2xl sm:text-3xl md:text-4xl font-bold" style="color:#00cec9">100%</div>
+          <div class="text-xs sm:text-sm text-[#4a4e68] mt-1.5 uppercase tracking-wider font-medium">On-Chain</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FEATURES ==================== -->
+  <section id="features" class="relative z-10 py-24 sm:py-32">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8">
+      <!-- Section header -->
+      <div class="text-center mb-16 sm:mb-20 reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.06] text-xs text-[#6c5ce7] font-medium uppercase tracking-widest mb-4">
+          Capabilities
+        </div>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+          Everything an AI agent<br class="hidden sm:block">
+          <span class="text-gradient">needs to market</span>
+        </h2>
+        <p class="mt-4 text-[#8b8fa7] max-w-xl mx-auto">
+          From campaign strategy to page generation to real-time analytics. One autonomous agent, zero manual work.
+        </p>
+      </div>
+
+      <!-- Feature grid -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        <!-- Feature 1: AI Campaign Generation -->
+        <div class="glass-card gradient-border p-6 sm:p-8 reveal">
+          <div class="icon-glow mb-5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">AI Campaign Strategy</h3>
+          <p class="text-sm text-[#8b8fa7] leading-relaxed">
+            Describe your business. The agent designs targeting, messaging, budget allocation, and timing autonomously.
+          </p>
+        </div>
+
+        <!-- Feature 2: Landing Page Gen -->
+        <div class="glass-card gradient-border p-6 sm:p-8 reveal reveal-delay-1">
+          <div class="icon-glow mb-5" style="background: rgba(0,206,201,0.1); border-color: rgba(0,206,201,0.15);">
+            <svg class="w-5 h-5" style="color:#55efc4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Page Generation</h3>
+          <p class="text-sm text-[#8b8fa7] leading-relaxed">
+            Fully designed, responsive landing pages generated and deployed in under 30 seconds. No templates, no drag-and-drop.
+          </p>
+        </div>
+
+        <!-- Feature 3: Real-time Analytics -->
+        <div class="glass-card gradient-border p-6 sm:p-8 reveal reveal-delay-2">
+          <div class="icon-glow mb-5" style="background: rgba(253,203,110,0.1); border-color: rgba(253,203,110,0.15);">
+            <svg class="w-5 h-5" style="color:#fdcb6e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Live Analytics</h3>
+          <p class="text-sm text-[#8b8fa7] leading-relaxed">
+            Page views, CTR, conversions, revenue. Every event streams to your dashboard in real-time. No setup.
+          </p>
+        </div>
+
+        <!-- Feature 4: USDC Payments -->
+        <div class="glass-card gradient-border p-6 sm:p-8 reveal">
+          <div class="icon-glow mb-5" style="background: rgba(116,185,255,0.1); border-color: rgba(116,185,255,0.15);">
+            <svg class="w-5 h-5" style="color:#74b9ff" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Pay with USDC</h3>
+          <p class="text-sm text-[#8b8fa7] leading-relaxed">
+            x402 micropayments on GOAT Network. Pay per API call, no subscriptions, no invoices. Transparent and instant.
+          </p>
+        </div>
+
+        <!-- Feature 5: On-Chain Identity -->
+        <div class="glass-card gradient-border p-6 sm:p-8 reveal reveal-delay-1">
+          <div class="icon-glow mb-5" style="background: rgba(253,121,168,0.1); border-color: rgba(253,121,168,0.15);">
+            <svg class="w-5 h-5" style="color:#fd79a8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">ERC-8004 Identity</h3>
+          <p class="text-sm text-[#8b8fa7] leading-relaxed">
+            Verifiable on-chain agent registration. Know exactly what you're interacting with. Trustless by design.
+          </p>
+        </div>
+
+        <!-- Feature 6: Telegram Native -->
+        <div class="glass-card gradient-border p-6 sm:p-8 reveal reveal-delay-2">
+          <div class="icon-glow mb-5" style="background: rgba(85,239,196,0.1); border-color: rgba(85,239,196,0.15);">
+            <svg class="w-5 h-5" style="color:#55efc4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Telegram-Native</h3>
+          <p class="text-sm text-[#8b8fa7] leading-relaxed">
+            No dashboards to learn. Chat with @AdClawBot on Telegram. Describe your campaign. It handles everything.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== HOW IT WORKS ==================== -->
+  <section id="how-it-works" class="relative z-10 py-24 sm:py-32 section-fade">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8">
+      <div class="text-center mb-16 sm:mb-20 reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.06] text-xs text-[#00cec9] font-medium uppercase tracking-widest mb-4">
+          Workflow
+        </div>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+          Three messages.<br>
+          <span class="text-gradient">Full campaign.</span>
+        </h2>
+      </div>
+
+      <!-- Steps -->
+      <div class="grid md:grid-cols-3 gap-8 md:gap-6 lg:gap-10">
+        <!-- Step 1 -->
+        <div class="reveal">
+          <div class="glass-card p-6 sm:p-8 relative overflow-hidden group">
+            <div class="absolute top-4 right-4 text-6xl sm:text-7xl font-black text-white/[0.03] select-none group-hover:text-white/[0.06] transition-colors">01</div>
+            <div class="flex items-center gap-3 mb-5">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#6c5ce7] to-[#a29bfe] flex items-center justify-center text-sm font-bold">1</div>
+              <div class="h-px flex-1 bg-gradient-to-r from-[rgba(108,92,231,0.3)] to-transparent"></div>
+            </div>
+            <h3 class="text-lg font-semibold mb-3">Describe Your Business</h3>
+            <div class="terminal">
+              <div class="terminal-header">
+                <div class="terminal-dot" style="background:#ff6b6b"></div>
+                <div class="terminal-dot" style="background:#fdcb6e"></div>
+                <div class="terminal-dot" style="background:#55efc4"></div>
+                <span class="text-[10px] text-[#4a4e68] ml-2">Telegram</span>
+              </div>
+              <div class="p-4 text-[#8b8fa7]">
+                <div><span class="text-[#00cec9]">you:</span> I run a coffee shop in Chennai. Grand opening March 22.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="reveal reveal-delay-1">
+          <div class="glass-card p-6 sm:p-8 relative overflow-hidden group">
+            <div class="absolute top-4 right-4 text-6xl sm:text-7xl font-black text-white/[0.03] select-none group-hover:text-white/[0.06] transition-colors">02</div>
+            <div class="flex items-center gap-3 mb-5">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#00cec9] to-[#55efc4] flex items-center justify-center text-sm font-bold text-[#06070b]">2</div>
+              <div class="h-px flex-1 bg-gradient-to-r from-[rgba(0,206,201,0.3)] to-transparent"></div>
+            </div>
+            <h3 class="text-lg font-semibold mb-3">Agent Builds Everything</h3>
+            <div class="terminal">
+              <div class="terminal-header">
+                <div class="terminal-dot" style="background:#ff6b6b"></div>
+                <div class="terminal-dot" style="background:#fdcb6e"></div>
+                <div class="terminal-dot" style="background:#55efc4"></div>
+                <span class="text-[10px] text-[#4a4e68] ml-2">AdClaw Agent</span>
+              </div>
+              <div class="p-4 text-[#8b8fa7] space-y-1">
+                <div><span class="text-[#6c5ce7]">agent:</span> Campaign created.</div>
+                <div class="text-[#4a4e68]">&nbsp;&nbsp;Landing page deployed</div>
+                <div class="text-[#4a4e68]">&nbsp;&nbsp;Event page live</div>
+                <div class="text-[#4a4e68]">&nbsp;&nbsp;Analytics tracking active</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="reveal reveal-delay-2">
+          <div class="glass-card p-6 sm:p-8 relative overflow-hidden group">
+            <div class="absolute top-4 right-4 text-6xl sm:text-7xl font-black text-white/[0.03] select-none group-hover:text-white/[0.06] transition-colors">03</div>
+            <div class="flex items-center gap-3 mb-5">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#fdcb6e] to-[#fd79a8] flex items-center justify-center text-sm font-bold text-[#06070b]">3</div>
+              <div class="h-px flex-1 bg-gradient-to-r from-[rgba(253,203,110,0.3)] to-transparent"></div>
+            </div>
+            <h3 class="text-lg font-semibold mb-3">Watch Results Stream In</h3>
+            <div class="terminal">
+              <div class="terminal-header">
+                <div class="terminal-dot" style="background:#ff6b6b"></div>
+                <div class="terminal-dot" style="background:#fdcb6e"></div>
+                <div class="terminal-dot" style="background:#55efc4"></div>
+                <span class="text-[10px] text-[#4a4e68] ml-2">Dashboard</span>
+              </div>
+              <div class="p-4 text-[#8b8fa7] space-y-1">
+                <div><span class="text-[#00cec9]">live</span> &nbsp;Page views: <span class="text-white font-medium">1,247</span></div>
+                <div><span class="text-[#00cec9]">live</span> &nbsp;CTR: <span class="text-white font-medium">4.8%</span></div>
+                <div><span class="text-[#00cec9]">live</span> &nbsp;RSVPs: <span class="text-white font-medium">89</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ARCHITECTURE / TECH ==================== -->
+  <section class="relative z-10 py-24 sm:py-32">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <!-- Left: Text -->
+        <div class="reveal">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.06] text-xs text-[#fd79a8] font-medium uppercase tracking-widest mb-4">
+            Architecture
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6">
+            Built for the<br>
+            <span class="text-gradient-warm">agentic economy</span>
+          </h2>
+          <div class="space-y-5 text-[#8b8fa7]">
+            <div class="flex gap-4">
+              <div class="w-1 rounded-full bg-gradient-to-b from-[#6c5ce7] to-transparent flex-shrink-0"></div>
+              <div>
+                <div class="text-white font-medium mb-1">A2A Protocol (Google)</div>
+                <div class="text-sm">Agent-to-agent communication. AdClaw speaks the standard protocol for multi-agent orchestration.</div>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="w-1 rounded-full bg-gradient-to-b from-[#00cec9] to-transparent flex-shrink-0"></div>
+              <div>
+                <div class="text-white font-medium mb-1">x402 Payment Protocol</div>
+                <div class="text-sm">HTTP 402 micropayments. Every API call is paid per-use with USDC. No subscriptions, no invoices.</div>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="w-1 rounded-full bg-gradient-to-b from-[#fd79a8] to-transparent flex-shrink-0"></div>
+              <div>
+                <div class="text-white font-medium mb-1">ERC-8004 Agent Identity</div>
+                <div class="text-sm">On-chain registered agent with verifiable capabilities. Trustless, auditable, permissionless.</div>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="w-1 rounded-full bg-gradient-to-b from-[#fdcb6e] to-transparent flex-shrink-0"></div>
+              <div>
+                <div class="text-white font-medium mb-1">GOAT Network (Bitcoin L2)</div>
+                <div class="text-sm">Secured by Bitcoin. Fast finality. Low gas. The ideal chain for autonomous agent economics.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Visual (code/terminal aesthetic) -->
+        <div class="reveal reveal-delay-2">
+          <div class="terminal">
+            <div class="terminal-header">
+              <div class="terminal-dot" style="background:#ff6b6b"></div>
+              <div class="terminal-dot" style="background:#fdcb6e"></div>
+              <div class="terminal-dot" style="background:#55efc4"></div>
+              <span class="text-[10px] text-[#4a4e68] ml-auto font-mono">agent-card.json</span>
+            </div>
+            <div class="p-5 sm:p-6 text-[13px] leading-[1.8] overflow-x-auto">
+              <div class="text-[#4a4e68]">// AdClaw Agent Identity</div>
+              <div>{</div>
+              <div class="pl-4"><span class="text-[#fd79a8]">"name"</span>: <span class="text-[#fdcb6e]">"AdClaw Marketing Agent"</span>,</div>
+              <div class="pl-4"><span class="text-[#fd79a8]">"protocol"</span>: <span class="text-[#fdcb6e]">"a2a"</span>,</div>
+              <div class="pl-4"><span class="text-[#fd79a8]">"chain"</span>: <span class="text-[#fdcb6e]">"goat-testnet3"</span>,</div>
+              <div class="pl-4"><span class="text-[#fd79a8]">"identity"</span>: {</div>
+              <div class="pl-8"><span class="text-[#fd79a8]">"standard"</span>: <span class="text-[#fdcb6e]">"ERC-8004"</span>,</div>
+              <div class="pl-8"><span class="text-[#fd79a8]">"verified"</span>: <span class="text-[#00cec9]">true</span></div>
+              <div class="pl-4">},</div>
+              <div class="pl-4"><span class="text-[#fd79a8]">"payment"</span>: {</div>
+              <div class="pl-8"><span class="text-[#fd79a8]">"protocol"</span>: <span class="text-[#fdcb6e]">"x402"</span>,</div>
+              <div class="pl-8"><span class="text-[#fd79a8]">"token"</span>: <span class="text-[#fdcb6e]">"USDC"</span>,</div>
+              <div class="pl-8"><span class="text-[#fd79a8]">"perCall"</span>: <span class="text-[#74b9ff]">0.01</span></div>
+              <div class="pl-4">},</div>
+              <div class="pl-4"><span class="text-[#fd79a8]">"skills"</span>: [</div>
+              <div class="pl-8"><span class="text-[#fdcb6e]">"campaign_strategy"</span>,</div>
+              <div class="pl-8"><span class="text-[#fdcb6e]">"landing_page_gen"</span>,</div>
+              <div class="pl-8"><span class="text-[#fdcb6e]">"analytics_tracking"</span>,</div>
+              <div class="pl-8"><span class="text-[#fdcb6e]">"audience_targeting"</span></div>
+              <div class="pl-4">],</div>
+              <div class="pl-4"><span class="text-[#fd79a8]">"status"</span>: <span class="text-[#00cec9]">"online"</span> <span class="pulse-dot ml-1" style="width:6px;height:6px;display:inline-block;vertical-align:middle"></span></div>
+              <div>}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PRICING ==================== -->
+  <section id="pricing" class="relative z-10 py-24 sm:py-32 section-fade">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8">
+      <div class="text-center mb-16 sm:mb-20 reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.06] text-xs text-[#fdcb6e] font-medium uppercase tracking-widest mb-4">
+          Pricing
+        </div>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+          Pay per call.<br>
+          <span class="text-gradient-warm">Not per month.</span>
+        </h2>
+        <p class="mt-4 text-[#8b8fa7] max-w-lg mx-auto">
+          x402 micropayments. USDC on GOAT Network. No subscriptions, no credit cards, no vendor lock-in.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 max-w-4xl mx-auto">
+        <!-- Free Tier -->
+        <div class="glass-card p-6 sm:p-8 reveal">
+          <div class="text-xs uppercase tracking-widest text-[#4a4e68] font-medium mb-4">Explorer</div>
+          <div class="flex items-baseline gap-1 mb-1">
+            <span class="text-3xl sm:text-4xl font-bold">Free</span>
+          </div>
+          <div class="text-sm text-[#4a4e68] mb-6">Open endpoints, no auth</div>
+          <div class="h-px bg-white/[0.04] mb-6"></div>
+          <ul class="space-y-3 text-sm text-[#8b8fa7]">
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Agent discovery (A2A)
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Health check
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Public dashboard
+            </li>
+          </ul>
+        </div>
+
+        <!-- Pay-per-call Tier -->
+        <div class="relative glass-card p-6 sm:p-8 reveal reveal-delay-1" style="border-color: rgba(108,92,231,0.25); box-shadow: 0 0 40px rgba(108,92,231,0.08);">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-gradient-to-r from-[#6c5ce7] to-[#00cec9] text-white">
+            Recommended
+          </div>
+          <div class="text-xs uppercase tracking-widest text-[#6c5ce7] font-medium mb-4">Agent</div>
+          <div class="flex items-baseline gap-1 mb-1">
+            <span class="text-3xl sm:text-4xl font-bold text-gradient">$0.01</span>
+            <span class="text-sm text-[#4a4e68]">/ call</span>
+          </div>
+          <div class="text-sm text-[#4a4e68] mb-6">x402 USDC micropayments</div>
+          <div class="h-px bg-white/[0.04] mb-6"></div>
+          <ul class="space-y-3 text-sm text-[#8b8fa7]">
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Campaign creation
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Landing page generation
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Event page generation
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Real-time analytics
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Full A2A task execution
+            </li>
+          </ul>
+          <button class="btn-glow w-full mt-8 !text-sm" onclick="window.open('https://t.me/AdClawBot','_blank')">
+            Start Building
+          </button>
+        </div>
+
+        <!-- Enterprise / Custom -->
+        <div class="glass-card p-6 sm:p-8 reveal reveal-delay-2 sm:col-span-2 lg:col-span-1">
+          <div class="text-xs uppercase tracking-widest text-[#4a4e68] font-medium mb-4">Enterprise</div>
+          <div class="flex items-baseline gap-1 mb-1">
+            <span class="text-3xl sm:text-4xl font-bold">Custom</span>
+          </div>
+          <div class="text-sm text-[#4a4e68] mb-6">Volume pricing, SLAs</div>
+          <div class="h-px bg-white/[0.04] mb-6"></div>
+          <ul class="space-y-3 text-sm text-[#8b8fa7]">
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Everything in Agent
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Custom brand templates
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-[#00cec9] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              Priority support
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ON-CHAIN IDENTITY ==================== -->
+  <section id="identity" class="relative z-10 py-24 sm:py-32">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8">
+      <div class="glass-card p-8 sm:p-12 md:p-16 text-center relative overflow-hidden reveal">
+        <!-- Background decoration -->
+        <div class="absolute inset-0 opacity-30">
+          <div class="absolute top-0 left-0 w-full h-full" style="background: radial-gradient(ellipse at 30% 50%, rgba(108,92,231,0.08) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(0,206,201,0.06) 0%, transparent 60%);"></div>
+        </div>
+
+        <div class="relative z-10">
+          <!-- Shield icon -->
+          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-[rgba(108,92,231,0.15)] to-[rgba(0,206,201,0.1)] border border-white/[0.08] flex items-center justify-center">
+            <svg class="w-8 h-8 text-[#a29bfe]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+
+          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+            Verified on <span class="text-gradient">GOAT Network</span>
+          </h2>
+          <p class="text-[#8b8fa7] max-w-xl mx-auto mb-8">
+            AdClaw's agent identity is registered on-chain via ERC-8004. Every capability, every interaction, fully auditable and trustless.
+          </p>
+
+          <!-- On-chain info pills -->
+          <div class="flex flex-wrap justify-center gap-3 mb-10">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.06] text-sm">
+              <span class="w-2 h-2 rounded-full bg-[#00cec9]"></span>
+              <span class="text-[#8b8fa7]">Network:</span>
+              <span class="text-white font-medium">GOAT Testnet3</span>
+            </div>
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.06] text-sm">
+              <span class="w-2 h-2 rounded-full bg-[#6c5ce7]"></span>
+              <span class="text-[#8b8fa7]">Standard:</span>
+              <span class="text-white font-medium">ERC-8004</span>
+            </div>
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.06] text-sm">
+              <span class="w-2 h-2 rounded-full bg-[#fdcb6e]"></span>
+              <span class="text-[#8b8fa7]">Payment:</span>
+              <span class="text-white font-medium">x402 / USDC</span>
+            </div>
+          </div>
+
+          <a href="https://explorer.testnet3.goat.network" target="_blank" class="btn-ghost !text-sm">
+            View on GOAT Explorer
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FINAL CTA ==================== -->
+  <section class="relative z-10 py-24 sm:py-32">
+    <div class="max-w-4xl mx-auto px-5 sm:px-8 text-center">
+      <div class="reveal">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
+          Stop managing campaigns.<br>
+          <span class="text-gradient">Deploy an agent.</span>
+        </h2>
+        <p class="mt-6 text-lg sm:text-xl text-[#8b8fa7] max-w-xl mx-auto">
+          One Telegram message. AI-generated campaigns. Real-time analytics. Crypto-native payments. Running 24/7.
+        </p>
+        <div class="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+          <button class="btn-glow text-base !px-10 !py-4" onclick="window.open('https://t.me/AdClawBot','_blank')">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+            Launch @AdClawBot
+          </button>
+          <a href="/dashboard" class="btn-ghost text-base !px-10 !py-4">
+            Explore Dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="relative z-10 border-t border-white/[0.04]">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 py-10 sm:py-12">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        <!-- Left -->
+        <div class="flex flex-col sm:flex-row items-center gap-4 text-sm text-[#4a4e68]">
+          <span class="text-base font-bold text-white/80">
+            Ad<span class="text-gradient">Claw</span>
+          </span>
+          <span class="hidden sm:inline">&middot;</span>
+          <span>Autonomous AI Marketing Agent</span>
+          <span class="hidden sm:inline">&middot;</span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#00cec9]"></span>
+            ERC-8004 Registered
+          </span>
+        </div>
+
+        <!-- Right -->
+        <div class="flex items-center gap-6 text-sm text-[#4a4e68]">
+          <a href="/dashboard" class="link-underline hover:text-white/60 transition-colors">Dashboard</a>
+          <a href="/.well-known/agent.json" class="link-underline hover:text-white/60 transition-colors font-mono text-xs">agent.json</a>
+          <a href="https://t.me/AdClawBot" target="_blank" class="link-underline hover:text-white/60 transition-colors">Telegram</a>
+        </div>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-white/[0.03] text-center text-xs text-[#2d3148]">
+        Built on GOAT Network &middot; Powered by AI &middot; Secured by Bitcoin
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script>
+    // ---- IntersectionObserver scroll reveal ----
+    (function() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              // Once visible, stop observing (one-time animation)
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '0px 0px -40px 0px',
+        }
+      );
+
+      document.querySelectorAll('.reveal').forEach((el) => {
+        observer.observe(el);
+      });
+    })();
+
+    // ---- Nav background on scroll ----
+    (function() {
+      const nav = document.getElementById('nav');
+      let ticking = false;
+
+      function updateNav() {
+        if (window.scrollY > 20) {
+          nav.style.background = 'rgba(6, 7, 11, 0.8)';
+          nav.style.backdropFilter = 'blur(16px) saturate(1.2)';
+          nav.style.webkitBackdropFilter = 'blur(16px) saturate(1.2)';
+          nav.style.borderBottom = '1px solid rgba(108, 92, 231, 0.08)';
+        } else {
+          nav.style.background = 'transparent';
+          nav.style.backdropFilter = 'none';
+          nav.style.webkitBackdropFilter = 'none';
+          nav.style.borderBottom = '1px solid transparent';
+        }
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateNav);
+          ticking = true;
+        }
+      }, { passive: true });
+
+      updateNav();
+    })();
+
+    // ---- Smooth scroll for anchor links ----
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -35,6 +35,21 @@ app.use('/sites', express.static(path.join(process.cwd(), 'public', 'sites'), { 
 app.use('/events', express.static(path.join(process.cwd(), 'public', 'events'), { maxAge: '1h' }));
 app.use('/dashboard', express.static(path.join(process.cwd(), 'public', 'dashboard')));
 app.use('/x402-demo', express.static(path.join(process.cwd(), 'public', 'x402-demo')));
+
+// Landing page (root)
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
+});
+
+// A2A agent card (well-known)
+app.get('/.well-known/agent.json', (_req, res) => {
+  const agentCard = path.join(process.cwd(), '..', 'agent-card.json');
+  if (fs.existsSync(agentCard)) {
+    res.type('application/json').sendFile(agentCard);
+  } else {
+    res.status(404).json({ error: 'Agent card not found' });
+  }
+});
 app.use('/tracker.js', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'tracker.js'));
 });

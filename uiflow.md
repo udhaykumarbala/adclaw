@@ -798,3 +798,52 @@ Border radius:
 Spacing scale:         4px base (4, 8, 12, 16, 20, 24, 32, 48)
 Max content width:     1120px (centered)
 ```
+
+---
+
+## 16. Product Landing Page (`/`)
+
+> Added: 2026-03-15
+> File: `server/public/index.html`
+> Route: `GET /` (served by `index.ts`)
+
+### Purpose
+
+Public-facing product marketing page for AdClaw. Distinct from the analytics dashboard (`/dashboard`). This page answers "What is AdClaw?" for hackathon judges, potential clients, and on-chain discoverers arriving from the ERC-8004 agent card.
+
+### Sections (top to bottom)
+
+```
+[Fixed Nav]          — Logo + nav links + "Launch Agent" CTA
+[Hero]               — Headline, sub-headline, CTA pair, animated gradient orb, perspective grid
+[Stats Bar]          — 4 key metrics (24/7, <30s deploy, $0.01/call, 100% on-chain)
+[Features Grid]      — 6 glass cards: AI Strategy, Page Gen, Analytics, USDC Payments, ERC-8004, Telegram
+[How It Works]       — 3-step flow with terminal-style code blocks
+[Architecture]       — Tech stack details + agent-card.json code preview
+[Pricing]            — 3-tier: Explorer (free), Agent ($0.01/call), Enterprise (custom)
+[On-Chain Identity]  — ERC-8004 verification badge + GOAT explorer link
+[Final CTA]          — "Deploy an agent" + Telegram + Dashboard buttons
+[Footer]             — Brand, ERC-8004 status, links
+```
+
+### Visual System
+
+- **Theme:** Ultra-dark cyberpunk, inspired by Vercel + Linear + Cursor
+- **Background:** `#06070b` root, dot grid pattern, aurora gradient mesh (animated), perspective grid floor
+- **Hero Visual:** Animated conic-gradient orb (420px, 12s spin, 6s breathe), concentric ring pulses, 8 floating CSS particles
+- **Cards:** Glassmorphism (backdrop-filter: blur(20px) saturate(1.2)), animated gradient border on hover (conic-gradient via @property --border-angle)
+- **Buttons:** Primary glow (gradient bg + box-shadow bloom on hover), ghost secondary (border + hover fill)
+- **Typography:** System font stack, hero 7xl/extrabold, section headers 5xl/bold, body sm-lg/regular
+- **Animations:** IntersectionObserver scroll reveal, orb spin/breathe, aurora drift, grid scroll, particle float, pulse dot, nav blur-on-scroll
+
+### Routes Added
+
+| Route | Method | Handler | Purpose |
+|-------|--------|---------|---------|
+| `/` | GET | `index.ts` sendFile | Serve landing page HTML |
+| `/.well-known/agent.json` | GET | `index.ts` sendFile | A2A agent card for discovery |
+
+### Dependencies
+
+- Tailwind CSS CDN (landing page only; dashboard remains pure CSS)
+- No external fonts, no external images, no JS frameworks
